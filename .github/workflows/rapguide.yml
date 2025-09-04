@@ -1,0 +1,31 @@
+name: Build Rap Guide
+
+on:
+  workflow_dispatch:  # lets you trigger manually from GitHub
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pydub pyttsx3 numpy
+          sudo apt-get install -y ffmpeg
+
+      - name: Run script
+        run: |
+          mkdir output
+          python rap_guide_builder.py --beat "Something random shit and that.mp3" --out_dir "output"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: rap_guide_mp3s
+          path: output/*.mp3
